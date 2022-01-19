@@ -7,8 +7,6 @@
 // Make this code compile! Execute `rustlings hint advanced_errs1` for
 // hints :)
 
-// I AM NOT DONE
-
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -24,6 +22,13 @@ impl From<CreationError> for ParsePosNonzeroError {
     fn from(e: CreationError) -> Self {
         // TODO: complete this implementation so that the `?` operator will
         // work for `CreationError`
+        ParsePosNonzeroError::Creation(e)
+    }
+}
+
+impl From<ParseIntError> for ParsePosNonzeroError {
+    fn from(e: ParseIntError) -> Self {
+        ParsePosNonzeroError::ParseInt(e)
     }
 }
 
@@ -35,6 +40,10 @@ impl From<CreationError> for ParsePosNonzeroError {
 
 impl FromStr for PositiveNonzeroInteger {
     type Err = ParsePosNonzeroError;
+    // 这里要返回的 Err 类型是 ParsePosNonzeroError，而 parse 返回的错误类型是 ParseIntError，所以需要为
+    // ParsePosNonzeroError 实现 trait From<ParseIntError>。
+    // PositiveNonzeroInteger::new 则是返回 CreationError，所以要为 ParsePosNonzeroError 实现 trait
+    // From<CreationError>。
     fn from_str(s: &str) -> Result<PositiveNonzeroInteger, Self::Err> {
         let x: i64 = s.parse()?;
         Ok(PositiveNonzeroInteger::new(x)?)
