@@ -6,6 +6,7 @@ struct Person {
     name: String,
     age: usize,
 }
+use std::str::FromStr;
 
 // We implement the Default trait to use it as a fallback
 // when the provided string is not convertible into a Person object
@@ -33,13 +34,28 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let ss: Vec<&str> = s.split(",").collect::<Vec<&str>>();
+        let mut person = Person{
+            name: String::from("John"),
+            age: 30,
+        };
+        if ss.len() != 2 || ss[0].len() == 0 {
+            return person;
+        }
+        let p = usize::from_str(ss[1]);
+        if let Ok(i) = p {
+            person.age = i;
+        } else {
+            return person;
+        }
+        if ss[0].len() > 0 {
+            person.name = String::from(ss[0]);
+        }
+        person
     }
 }
-
 fn main() {
     // Use the `from` function
     let p1 = Person::from("Mark,20");
@@ -52,6 +68,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn test_default() {
         // Test that the default person is 30 year old John
